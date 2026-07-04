@@ -183,6 +183,20 @@ function doClearWord(){
   showMsg('');
 }
 
+function doRestart(){
+  if(won) return;
+  if(!foundWords.length && !sessionPath.length) return;
+  if(foundWords.length && !confirm('להתחיל את הפאזל מההתחלה? המילים שנמצאו יימחקו.')) return;
+  sessionPath = [];
+  lastBoundaryPos = -1;
+  coveredSet = new Set();
+  usedWords = new Set();
+  foundWords = [];
+  saveState();
+  renderAll();
+  showMsg('');
+}
+
 function doConfirm(){
   if(won) return;
   const slice = currentSlice();
