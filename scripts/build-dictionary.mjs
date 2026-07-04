@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // בונה את data/dictionary.txt מרשימות המילים של eyaler/hebrew_wordlists (נגזרות HSpell, רישיון AGPL-3.0).
 // המקור: מילות HSpell בחיתוך עם ספירות תדירות מקורפוס CC100 — כלומר מילים תקניות ממוינות לפי שכיחות אמיתית.
-// הרצה: node scripts/build-dictionary.mjs [--size 12000]
+// ברירת המחדל: כל המילים התקינות (~187 אלף) — המשחק מקבל כל מילה תקינה,
+// והגנרטור משתמש בסדר התדירות כדי לבחור פתרונות ממילים נפוצות בלבד.
+// הרצה: node scripts/build-dictionary.mjs [--size N]   (‏--size 0 = הכל)
 
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -21,7 +23,7 @@ const SOURCES = {
 
 const SIZE = (() => {
   const i = process.argv.indexOf('--size');
-  return i > -1 ? parseInt(process.argv[i + 1], 10) : 12000;
+  return i > -1 ? parseInt(process.argv[i + 1], 10) : 0; // 0 = ללא הגבלה
 })();
 
 async function download(name, url) {
@@ -70,7 +72,7 @@ async function main() {
     if (places.has(word) || blocklist.has(word) || seen.has(word)) continue;
     seen.add(word);
     words.push(word);
-    if (words.length >= SIZE) break;
+    if (SIZE > 0 && words.length >= SIZE) break;
   }
 
   await writeFile(OUT_FILE, words.join('\n') + '\n', 'utf8');

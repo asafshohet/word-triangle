@@ -8,8 +8,9 @@
 //   node scripts/generate-puzzles.mjs --regen              חישוב מחדש של כל הבנק מהמילון הנוכחי
 //   node scripts/generate-puzzles.mjs --verify             בדיקה עצמית של כל הבנק
 //
-// פאזל תקין: כיסוי מינימלי של 2-3 מילים, לפחות MIN_WORDS מילים משחקיות,
-// ופתרון לדוגמה שמורכב כולו ממילים בתוך COMMON_CUTOFF המילים הנפוצות.
+// פאזל תקין: לפחות MIN_WORDS מילים משחקיות, ופתרון של 2-3 מילים המורכב כולו
+// ממילים בתוך COMMON_CUTOFF המילים הנפוצות. ה"אופטימלי" המוצג לשחקן מבוסס על
+// מילים נפוצות בלבד (כמו "פר" בגולף) — שחקן שמנצח אותו בעזרת מילה נדירה פשוט ניצח את הפר.
 
 import { mkdir, readFile, writeFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -185,7 +186,7 @@ function toPuzzle(id, sides, analysis) {
   return {
     id,
     sides,
-    optimal: analysis.full.min,
+    optimal: analysis.common.min,
     solution: analysis.common.solution,
     words: analysis.playable.map(e => e.word),
   };
@@ -200,8 +201,7 @@ async function savePuzzle(puzzle) {
 
 function acceptable(analysis) {
   return analysis.playable.length >= MIN_WORDS
-    && analysis.full && analysis.full.min >= 2 && analysis.full.min <= 3
-    && analysis.common && analysis.common.min === analysis.full.min;
+    && analysis.common && analysis.common.min >= 2 && analysis.common.min <= 3;
 }
 
 function report(sides, analysis) {
@@ -247,7 +247,7 @@ async function cmdCount(n, dict) {
       await savePuzzle(toPuzzle(id, sides, analysis));
       console.log(
         `#${id}: ${sides.map(s => s.join('')).join('|')} — ` +
-        `${analysis.playable.length} מילים, אופטימלי ${analysis.full.min} ` +
+        `${analysis.playable.length} מילים, אופטימלי ${analysis.common.min} ` +
         `(${analysis.common.solution.join(' ← ')})`
       );
       break;
@@ -298,7 +298,7 @@ async function cmdRegen(dict) {
 
     if (acceptable(analysis)) {
       await savePuzzle(toPuzzle(id, old.sides, analysis));
-      console.log(`#${id}: עודכן (${analysis.playable.length} מילים, אופטימלי ${analysis.full.min})`);
+      console.log(`#${id}: עודכן (${analysis.playable.length} מילים, אופטימלי ${analysis.common.min})`);
       continue;
     }
 
@@ -316,7 +316,7 @@ async function cmdRegen(dict) {
         if (!acceptable(a)) continue;
         sigs.add(sig);
         await savePuzzle(toPuzzle(id, sides, a));
-        console.log(`#${id}: הוחלף בלוח חדש ${sides.map(s => s.join('')).join('|')} (${a.playable.length} מילים, אופטימלי ${a.full.min})`);
+        console.log(`#${id}: הוחלף בלוח חדש ${sides.map(s => s.join('')).join('|')} (${a.playable.length} מילים, אופטימלי ${a.common.min})`);
         replaced = true;
         break;
       }
@@ -343,8 +343,8 @@ async function cmdVerify(dict) {
     if (covered.size !== 9) errors.push(`הפתרון מכסה ${covered.size}/9 אותיות`);
 
     const analysis = analyzeBoard(p.sides, dict);
-    if (!analysis.full || analysis.full.min !== p.optimal) {
-      errors.push(`אופטימלי מחושב ${analysis.full?.min} ≠ שמור ${p.optimal}`);
+    if (!analysis.common || analysis.common.min !== p.optimal) {
+      errors.push(`אופטימלי מחושב ${analysis.common?.min} ≠ שמור ${p.optimal}`);
     }
 
     if (errors.length) { bad++; console.log(`#${id} ✗\n  ` + errors.join('\n  ')); }

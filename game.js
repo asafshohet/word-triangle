@@ -213,9 +213,11 @@ function winGame(){
   const stats = recordWin();
   const n = foundWords.length;
   document.getElementById('win-text').textContent =
-    n <= puzzle.optimal
-      ? 'פתרתם בדיוק כמו הפתרון האופטימלי — ' + n + ' מילים.'
-      : 'כיסיתם את כל תשע האותיות ב-' + n + ' מילים. הפתרון האופטימלי הוא ' + puzzle.optimal + '.';
+    n < puzzle.optimal
+      ? 'מרשים! ניצחתם את הפתרון האופטימלי (' + puzzle.optimal + ') עם ' + n + ' מילים בלבד.'
+      : n === puzzle.optimal
+        ? 'פתרתם בדיוק כמו הפתרון האופטימלי — ' + n + ' מילים.'
+        : 'כיסיתם את כל תשע האותיות ב-' + n + ' מילים. הפתרון האופטימלי הוא ' + puzzle.optimal + '.';
   document.getElementById('win-words').textContent = foundWords.join(' ← ');
   document.getElementById('win-streak').textContent =
     dayNum === todayNum && stats.streak > 1 ? '🔥 רצף של ' + stats.streak + ' ימים' : '';
