@@ -128,6 +128,7 @@ function restoreState(saved){
     won = true;
     showSolvedBanner();
     updateDotStates(); // אחרי won כדי לצבוע הכל
+    renderCurrentWord();
   }
 }
 
@@ -220,6 +221,7 @@ function winGame(){
     dayNum === todayNum && stats.streak > 1 ? '🔥 רצף של ' + stats.streak + ' ימים' : '';
   document.getElementById('win-overlay').classList.add('show');
   showSolvedBanner();
+  renderCurrentWord();
 }
 
 function showSolvedBanner(){
@@ -317,11 +319,13 @@ function renderPath(){
 function renderCurrentWord(){
   const slice = currentSlice();
   const el = document.getElementById('current-word');
-  if(!slice.length){
-    el.innerHTML = '<span class="ph">לחצו על אות או גררו בין אותיות כדי להתחיל</span>';
+  if(!slice.length || won){
+    el.classList.remove('typing');
+    el.innerHTML = won ? '' : '<span class="ph">לחצו על אות או גררו בין אותיות כדי להתחיל</span>';
     return;
   }
   el.textContent = slice.map(i => letters[i].id).join('');
+  el.classList.add('typing');
 }
 
 function renderProgress(){
@@ -335,7 +339,9 @@ function renderFoundWords(){
     list.innerHTML = '<span class="fw-empty">עדיין אין מילים</span>';
     return;
   }
-  list.innerHTML = foundWords.map(w => '<span class="fw-chip">'+w+'</span>').join('');
+  list.innerHTML = foundWords.map((w, i) =>
+    '<span class="fw-chip"><span class="fw-n">'+(i+1)+'</span>'+w+'</span>'
+  ).join('');
 }
 
 function renderAll(){
