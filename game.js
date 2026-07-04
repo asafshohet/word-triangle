@@ -175,14 +175,6 @@ function doBackspace(){
   }
 }
 
-function doClearWord(){
-  if(won) return;
-  const floor = lastBoundaryPos === -1 ? 0 : lastBoundaryPos + 1;
-  sessionPath.length = floor;
-  renderPath(); updateDotStates(); renderCurrentWord();
-  showMsg('');
-}
-
 function doRestart(){
   if(won) return;
   if(!foundWords.length && !sessionPath.length) return;
