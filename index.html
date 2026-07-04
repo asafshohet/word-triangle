@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משולש המילים — פאזל מילים עברי יומי</title>
+<meta name="description" content="משולש המילים — פאזל מילים עברי יומי בהשראת Letter Boxed. כסו את כל תשע האותיות במינימום מילים.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="wrap">
+  <nav>
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><polygon points="12,2 22,21 2,21" fill="none" stroke="#E3A23B" stroke-width="2"/></svg>
+      משולש המילים
+    </div>
+    <div class="nav-actions">
+      <button class="archive-toggle" onclick="toggleArchive(true)">ארכיון</button>
+      <span class="badge" id="puzzle-badge">פאזל</span>
+    </div>
+  </nav>
+
+  <header class="top">
+    <h1>משולש המילים</h1>
+    <p class="tagline">תשע אותיות. שלוש צלעות. פאזל חדש בכל יום.</p>
+  </header>
+
+  <button class="rules-toggle" onclick="document.getElementById('rules').classList.toggle('show')">איך משחקים?</button>
+  <div class="rules-box" id="rules">
+    <ul>
+      <li>לחצו על אותיות או גררו ביניהן ליצירת מילה. לא ניתן לעבור פעמיים ברצף על אותה צלע של המשולש.</li>
+      <li>המילה הבאה חייבת להתחיל באות שבה הסתיימה המילה הקודמת.</li>
+      <li id="optimal-note">המטרה: לכסות את כל תשע האותיות.</li>
+      <li>אותיות סופיות (ך ם ן ף ץ) מוצגות על הלוח בצורת הבסיס שלהן ומומרות אוטומטית בסוף מילה.</li>
+    </ul>
+  </div>
+
+  <div class="game-panel">
+    <div class="progress-row">
+      <span>מילים: <b id="word-count">0</b></span>
+      <span><b id="covered-count">0</b> / 9 אותיות</span>
+    </div>
+
+    <div class="board-stage">
+      <svg viewBox="0 0 600 560" xmlns="http://www.w3.org/2000/svg" id="board-svg">
+        <polygon class="tri-outline" points="300,80 510,480 90,480"/>
+        <path class="path-line" id="path-line" d=""/>
+        <g id="letters-layer"></g>
+      </svg>
+    </div>
+
+    <div class="current-word-display" id="current-word"><span class="ph">לחצו על אות כדי להתחיל</span></div>
+    <div class="msg" id="msg"></div>
+
+    <div class="solved-banner" id="solved-banner">
+      <div class="sb-text" id="solved-text"></div>
+      <button class="btn small" onclick="shareResult()">שיתוף התוצאה</button>
+    </div>
+
+    <div class="controls" id="controls">
+      <button class="btn ghost small" onclick="doBackspace()">מחיקת אות</button>
+      <button class="btn ghost small" onclick="doClearWord()">ניקוי מילה</button>
+      <button class="btn" onclick="doConfirm()">אישור מילה</button>
+    </div>
+
+    <div class="found-words">
+      <div class="fw-label">מילים שנמצאו:</div>
+      <div class="fw-list" id="fw-list"><span class="fw-empty">עדיין אין מילים</span></div>
+    </div>
+
+    <div class="hint-row">
+      <button onclick="revealSolution()">תקוע? הצג את הפתרון</button>
+      <div class="solution-reveal" id="solution-reveal"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div>משולש המילים — משחק בהשראת Letter Boxed, בעברית מקורית.</div>
+    <div class="credit">© 2026 · אין קשר לניו יורק טיימס או ל-Letter Boxed המקורי</div>
+    <div class="credit">המילון מבוסס על פרויקט <a href="http://hspell.ivrix.org.il/" target="_blank" rel="noopener">HSpell</a> ורשימות המילים של <a href="https://github.com/eyaler/hebrew_wordlists" target="_blank" rel="noopener">eyaler/hebrew_wordlists</a> (AGPL-3.0)</div>
+  </footer>
+</div>
+
+<div class="win-overlay" id="win-overlay">
+  <div class="win-card">
+    <div class="icon">🔺</div>
+    <h2>פתרתם את המשולש!</h2>
+    <p id="win-text"></p>
+    <div class="win-words" id="win-words"></div>
+    <div class="win-streak" id="win-streak"></div>
+    <div class="win-actions">
+      <button class="btn" onclick="shareResult()">שיתוף התוצאה</button>
+      <button class="btn ghost" onclick="closeWinOverlay()">סגירה</button>
+    </div>
+  </div>
+</div>
+
+<div class="archive-panel" id="archive-panel">
+  <div class="archive-card">
+    <h3>ארכיון פאזלים</h3>
+    <div class="archive-list" id="archive-list"></div>
+    <button class="btn ghost small archive-close" onclick="toggleArchive(false)">סגירה</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

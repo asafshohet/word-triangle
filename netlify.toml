@@ -1,0 +1,14 @@
+[build]
+  publish = "."
+
+# קובצי פאזל לא משתנים אחרי יצירה — אפשר לקשח קאש
+[[headers]]
+  for = "/data/puzzles/*.json"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# המניפסט קובע איזה פאזל מוצג היום — קאש קצר
+[[headers]]
+  for = "/data/puzzles/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
