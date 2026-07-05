@@ -13,6 +13,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const RAW_DIR = path.join(ROOT, 'data', 'raw');
 const OUT_FILE = path.join(ROOT, 'data', 'dictionary.txt');
 const BLOCKLIST_FILE = path.join(ROOT, 'data', 'blocklist.txt');
+const ALLOWLIST_FILE = path.join(ROOT, 'data', 'allowlist.txt');
 
 const SOURCES = {
   'cc100_intersect_no_fatverb.csv':
@@ -59,6 +60,13 @@ async function main() {
     );
   } catch { /* אין blocklist — בסדר */ }
 
+  let allowlist = new Set();
+  try {
+    allowlist = new Set(
+      (await readLines(ALLOWLIST_FILE)).filter(l => !l.startsWith('#')).map(l => l.trim())
+    );
+  } catch { /* אין allowlist — בסדר */ }
+
   const HEBREW_WORD = /^[א-ת]{2,}$/;
   const words = [];
   const seen = new Set();
@@ -69,10 +77,18 @@ async function main() {
     const comma = line.lastIndexOf(',');
     const word = comma === -1 ? line : line.slice(0, comma);
     if (!HEBREW_WORD.test(word)) continue;
-    if (places.has(word) || blocklist.has(word) || seen.has(word)) continue;
+    if (blocklist.has(word) || seen.has(word)) continue;
+    if (places.has(word) && !allowlist.has(word)) continue; // ה-allowlist עוקף התנגשות עם שם יישוב
     seen.add(word);
     words.push(word);
     if (SIZE > 0 && words.length >= SIZE) break;
+  }
+
+  // מילות allowlist שלא הופיעו במקור כלל (חסרות ב-HSpell) — נוספות בסוף, בעדיפות נמוכה
+  for (const word of allowlist) {
+    if (seen.has(word) || !HEBREW_WORD.test(word)) continue;
+    seen.add(word);
+    words.push(word);
   }
 
   await writeFile(OUT_FILE, words.join('\n') + '\n', 'utf8');
