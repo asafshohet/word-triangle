@@ -36,6 +36,7 @@ let coveredSet = new Set();
 let usedWords = new Set();
 let foundWords = [];
 let won = false;
+let everSolved = false; // נשאר true גם אחרי "שחקו שוב" — לצורך סימון בארכיון
 let dragging = false;
 
 // ---------- אחסון מקומי ----------
@@ -44,7 +45,7 @@ const stateKey = d => 'wt.day.' + d;
 
 function saveState(){
   try{
-    localStorage.setItem(stateKey(dayNum), JSON.stringify({ foundWords, solved: won }));
+    localStorage.setItem(stateKey(dayNum), JSON.stringify({ foundWords, solved: everSolved }));
   }catch(e){ /* מצב פרטי / אין אחסון */ }
 }
 function loadState(d){
@@ -112,6 +113,7 @@ async function init(){
   bindPointer();
 
   const saved = loadState(dayNum);
+  if(saved) everSolved = !!saved.solved;
   if(saved && saved.foundWords && saved.foundWords.length) restoreState(saved);
 }
 
@@ -215,6 +217,7 @@ function doConfirm(){
 
 function winGame(){
   won = true;
+  everSolved = true;
   saveState();
   const stats = recordWin();
   const n = foundWords.length;
@@ -242,6 +245,21 @@ function showSolvedBanner(){
 
 function closeWinOverlay(){
   document.getElementById('win-overlay').classList.remove('show');
+}
+
+function playAgain(){
+  sessionPath = [];
+  lastBoundaryPos = -1;
+  coveredSet = new Set();
+  usedWords = new Set();
+  foundWords = [];
+  won = false;
+  closeWinOverlay();
+  document.getElementById('solved-banner').classList.remove('show');
+  document.getElementById('controls').style.display = '';
+  showMsg('');
+  renderAll();
+  saveState();
 }
 
 function revealSolution(){
@@ -297,7 +315,7 @@ function renderBoard(){
     g.setAttribute('id','dot-'+idx);
     g.dataset.idx = idx;
     const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('cx', L.x); c.setAttribute('cy', L.y); c.setAttribute('r', 27);
+    c.setAttribute('cx', L.x); c.setAttribute('cy', L.y); c.setAttribute('r', 31);
     const t = document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x', L.x); t.setAttribute('y', L.y+2);
     t.textContent = L.id;
@@ -389,7 +407,7 @@ function hitLetter(svg, e, radius){
 function bindPointer(){
   const svg = document.getElementById('board-svg');
   svg.addEventListener('pointerdown', e => {
-    const idx = hitLetter(svg, e, 30);
+    const idx = hitLetter(svg, e, 34);
     if(idx === -1) return;
     e.preventDefault();
     dragging = true;
@@ -399,7 +417,7 @@ function bindPointer(){
   svg.addEventListener('pointermove', e => {
     if(!dragging) return;
     // בגרירה נדרש מגע קרוב יותר למרכז האות, כדי שמעבר-אגב לא יוסיף אות בטעות
-    const idx = hitLetter(svg, e, 24);
+    const idx = hitLetter(svg, e, 28);
     if(idx === -1) return;
     if(sessionPath.length && sessionPath[sessionPath.length-1] === idx) return;
     tryAddLetter(idx, true);

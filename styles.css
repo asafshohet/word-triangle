@@ -17,6 +17,7 @@
 }
 *{ box-sizing: border-box; }
 html, body{ margin:0; padding:0; }
+html, body{ overscroll-behavior-y: none; }
 body{
   background: var(--bg);
   color: var(--text);
@@ -89,7 +90,7 @@ h1{ font-family: var(--display); font-size: clamp(32px,7vw,46px); margin:0 0 8px
 .progress-row b{ color: var(--accent); }
 
 .board-stage{ max-width: 420px; margin: 0 auto; position: relative; }
-.board-stage svg{ width:100%; height:auto; display:block; touch-action: none; }
+.board-stage svg{ width:100%; height:auto; display:block; }
 
 .letter-dot{
   transform-box: fill-box; transform-origin: center;
@@ -98,15 +99,16 @@ h1{ font-family: var(--display); font-size: clamp(32px,7vw,46px); margin:0 0 8px
 .letter-dot circle{
   fill: var(--bg-panel-2); stroke: var(--line-dim); stroke-width: 2; cursor:pointer;
   transition: fill .15s, stroke .15s, filter .15s;
+  touch-action: none; /* רק על האות עצמה — כדי שגלילה/זום ישארו זמינים בשאר הלוח */
 }
 .letter-dot text{
-  font-family: var(--display); fill: var(--text); font-size: 26px; text-anchor: middle;
+  font-family: var(--display); fill: var(--text); font-size: 30px; text-anchor: middle;
   dominant-baseline: central; pointer-events:none;
   transition: fill .15s;
 }
 .letter-dot.active circle{ stroke: var(--accent); stroke-width:3; }
-.letter-dot.covered circle{ fill: var(--accent-soft); stroke: var(--accent); }
-.letter-dot.covered text{ fill: var(--accent); }
+.letter-dot.covered circle{ fill: var(--bg-panel-2); stroke: var(--accent); stroke-width: 2.5; }
+.letter-dot.covered text{ fill: var(--text); }
 .letter-dot.current{ transform: scale(1.1); }
 .letter-dot.current circle{
   fill: var(--accent); stroke: var(--accent);
@@ -126,7 +128,6 @@ h1{ font-family: var(--display); font-size: clamp(32px,7vw,46px); margin:0 0 8px
 
 /* אנוטציות שרטוט על הלוח */
 .bp-dim{ stroke: var(--line-dim); stroke-width: 1; opacity:.4; }
-.bp-arc{ fill:none; stroke: var(--line-dim); stroke-width: 1; opacity:.4; }
 .bp-label{
   font-family: var(--mono); font-size: 11px; fill: var(--text-dim); opacity:.6;
   text-anchor: middle;
@@ -172,6 +173,7 @@ h1{ font-family: var(--display); font-size: clamp(32px,7vw,46px); margin:0 0 8px
 }
 .solved-banner.show{ display:block; }
 .solved-banner .sb-text{ font-family: var(--mono); font-size: 13px; color: var(--accent); margin-bottom: 10px; }
+.solved-banner .sb-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
 .found-words{
   margin-top: 22px; border-top: 1px solid var(--line-faint); padding-top: 16px;
