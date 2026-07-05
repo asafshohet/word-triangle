@@ -127,11 +127,6 @@ h1{ font-family: var(--display); font-size: clamp(32px,7vw,46px); margin:0 0 8px
 .tri-outline{ fill:none; stroke: var(--line-dim); stroke-width: 1.2; opacity:.45; }
 
 /* אנוטציות שרטוט על הלוח */
-.bp-dim{ stroke: var(--line-dim); stroke-width: 1; opacity:.4; }
-.bp-label{
-  font-family: var(--mono); font-size: 11px; fill: var(--text-dim); opacity:.6;
-  text-anchor: middle;
-}
 .bp-cross{ stroke: var(--line-dim); stroke-width: 1; opacity:.35; fill:none; }
 .bp-cross-c{ fill:none; stroke: var(--line-dim); stroke-width: 1; opacity:.35; }
 
