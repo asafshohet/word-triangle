@@ -4,9 +4,9 @@
 
 // מיקומי 9 העמדות על הלוח: 0-2 צלע ימין (מלמעלה למטה), 3-5 תחתית (מימין לשמאל), 6-8 שמאל (מלמטה למעלה)
 const POSITIONS = [
-  { x:352.5, y:180 }, { x:405, y:280 }, { x:457.5, y:380 },
-  { x:405, y:480 },   { x:300, y:480 }, { x:195, y:480 },
-  { x:142.5, y:380 }, { x:195, y:280 }, { x:247.5, y:180 },
+  { x:365.6, y:165 }, { x:431.3, y:290 }, { x:496.9, y:415 },
+  { x:431.3, y:540 }, { x:300,   y:540 }, { x:168.8, y:540 },
+  { x:103.1, y:415 }, { x:168.8, y:290 }, { x:234.4, y:165 },
 ];
 const sideOfPos = i => Math.floor(i / 3);
 
@@ -315,7 +315,7 @@ function renderBoard(){
     g.setAttribute('id','dot-'+idx);
     g.dataset.idx = idx;
     const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('cx', L.x); c.setAttribute('cy', L.y); c.setAttribute('r', 31);
+    c.setAttribute('cx', L.x); c.setAttribute('cy', L.y); c.setAttribute('r', 34);
     const t = document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x', L.x); t.setAttribute('y', L.y+2);
     t.textContent = L.id;
@@ -407,7 +407,7 @@ function hitLetter(svg, e, radius){
 function bindPointer(){
   const svg = document.getElementById('board-svg');
   svg.addEventListener('pointerdown', e => {
-    const idx = hitLetter(svg, e, 34);
+    const idx = hitLetter(svg, e, 37);
     if(idx === -1) return;
     e.preventDefault();
     dragging = true;
@@ -417,7 +417,7 @@ function bindPointer(){
   svg.addEventListener('pointermove', e => {
     if(!dragging) return;
     // בגרירה נדרש מגע קרוב יותר למרכז האות, כדי שמעבר-אגב לא יוסיף אות בטעות
-    const idx = hitLetter(svg, e, 28);
+    const idx = hitLetter(svg, e, 31);
     if(idx === -1) return;
     if(sessionPath.length && sessionPath[sessionPath.length-1] === idx) return;
     tryAddLetter(idx, true);

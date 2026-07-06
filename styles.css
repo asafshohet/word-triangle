@@ -102,7 +102,7 @@ h1{ font-family: var(--display); font-size: clamp(32px,7vw,46px); margin:0 0 8px
   touch-action: none; /* רק על האות עצמה — כדי שגלילה/זום ישארו זמינים בשאר הלוח */
 }
 .letter-dot text{
-  font-family: var(--display); fill: var(--text); font-size: 30px; text-anchor: middle;
+  font-family: var(--display); fill: var(--text); font-size: 33px; text-anchor: middle;
   dominant-baseline: central; pointer-events:none;
   transition: fill .15s;
 }

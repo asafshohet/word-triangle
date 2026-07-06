@@ -18,8 +18,6 @@ const ALLOWLIST_FILE = path.join(ROOT, 'data', 'allowlist.txt');
 const SOURCES = {
   'cc100_intersect_no_fatverb.csv':
     'https://raw.githubusercontent.com/eyaler/hebrew_wordlists/main/cc100_intersect_no_fatverb.csv',
-  'israeli_place_names.txt':
-    'https://raw.githubusercontent.com/eyaler/hebrew_wordlists/main/israeli_place_names.txt',
 };
 
 const SIZE = (() => {
@@ -47,11 +45,9 @@ async function readLines(file) {
 async function main() {
   await mkdir(RAW_DIR, { recursive: true });
 
-  const [csvFile, placesFile] = await Promise.all(
+  const [csvFile] = await Promise.all(
     Object.entries(SOURCES).map(([name, url]) => download(name, url))
   );
-
-  const places = new Set(await readLines(placesFile));
 
   let blocklist = new Set();
   try {
@@ -78,7 +74,6 @@ async function main() {
     const word = comma === -1 ? line : line.slice(0, comma);
     if (!HEBREW_WORD.test(word)) continue;
     if (blocklist.has(word) || seen.has(word)) continue;
-    if (places.has(word) && !allowlist.has(word)) continue; // ה-allowlist עוקף התנגשות עם שם יישוב
     seen.add(word);
     words.push(word);
     if (SIZE > 0 && words.length >= SIZE) break;
