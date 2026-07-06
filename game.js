@@ -347,7 +347,7 @@ function renderCurrentWord(){
   const el = document.getElementById('current-word');
   if(!slice.length || won){
     el.classList.remove('typing');
-    el.innerHTML = won ? '' : '<span class="ph">לחצו על אות או גררו בין אותיות כדי להתחיל</span>';
+    el.innerHTML = won ? '' : '<span class="ph">לחצו על אות כדי להתחיל</span>';
     return;
   }
   el.textContent = slice.map(i => letters[i].id).join('');
